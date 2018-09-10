@@ -14,7 +14,7 @@ function GenerateUniquePhoneNumber()
 		Citizen.Wait(20)
 		phoneNumber = math.random(10000, 99999)
 
-		local result = MySQL.Sync.fetchAll('SELECT COUNT(*) as count FROM users WHERE phone_number = @phoneNumber',
+		local result = MySQL.Sync.fetchAll('SELECT * FROM users WHERE phone_number = @phone_number',
 		{
 			['@phoneNumber'] = phoneNumber
 		})
@@ -85,7 +85,7 @@ AddEventHandler('esx:playerLoaded', function(source)
 			sources       = {[source] = true}
 		}
 
-		xPlayer.set('phoneNumber', phoneNumber)
+		xPlayer.set('phone_number', phoneNumber)
 
 		if PhoneNumbers[xPlayer.job.name] ~= nil then
 			TriggerEvent('esx_phone:addSource', xPlayer.job.name, source)
@@ -116,7 +116,7 @@ end)
 AddEventHandler('esx:playerDropped', function(source)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	TriggerClientEvent('esx_phone:setPhoneNumberSource', -1, xPlayer.get('phoneNumber'), -1)
+	TriggerClientEvent('esx_phone:setPhoneNumberSource', -1, xPlayer.get('phone_number'), -1)
 	PhoneNumbers[xPlayer.get('phoneNumber')] = nil
 
 	if PhoneNumbers[xPlayer.job.name] ~= nil then
@@ -166,9 +166,9 @@ AddEventHandler('esx_phone:send', function(phoneNumber, message, anon, position)
 			end
 
 			if numHasDispatch then
-				TriggerClientEvent('esx_phone:onMessage', numSource, xPlayer.get('phoneNumber'), message, numPosition, (numHide and true or anon), numType, GetDistpatchRequestId(), phoneNumber)
+				TriggerClientEvent('esx_phone:onMessage', numSource, xPlayer.get('phone_number'), message, numPosition, (numHide and true or anon), numType, GetDistpatchRequestId(), phoneNumber)
 			else
-				TriggerClientEvent('esx_phone:onMessage', numSource, xPlayer.get('phoneNumber'), message, numPosition, (numHide and true or anon), numType, false)
+				TriggerClientEvent('esx_phone:onMessage', numSource, xPlayer.get('phone_number'), message, numPosition, (numHide and true or anon), numType, false)
 			end
 
 		end
@@ -220,7 +220,7 @@ AddEventHandler('esx_phone:addPlayerContact', function(phoneNumber, contactName)
 		['@number'] = phoneNumber
 	}, function(result)
 		if result[1] ~= nil then
-			if phoneNumber == xPlayer.get('phoneNumber') then
+			if phoneNumber == xPlayer.get('phone_number') then
 				TriggerClientEvent('esx:showNotification', _source, _U('cannot_add_self'))
 			else
 				local contacts  = xPlayer.get('contacts')
